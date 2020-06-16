@@ -8,6 +8,10 @@ from spyne import Application
 # @rpc decorator exposes methods as remote procedure calls
 # and declares the data types it accepts and returns
 from spyne import rpc
+from spyne.decorator import srpc
+from spyne.model.primitive import UnsignedInteger
+from spyne.model.primitive import String
+from spyne.model.primitive import Boolean
 # spyne.service.ServiceBase is the base class for all service definitions.
 from spyne import ServiceBase
 # The names of the needed types for implementing this service should be self-explanatory.
@@ -20,8 +24,9 @@ from spyne.server.wsgi import WsgiApplication
 
 # step1: Defining a Spyne Service
 class StudentInfoService(ServiceBase):
-    @rpc(Unicode, Unicode, _returns=Iterable(Unicode))
-    def get_student_info(self, name, password):
+    @rpc(String, String, _returns=String)
+    # @rpc(Unicode, Unicode, _returns=Iterable(Unicode))
+    def get_student_info(self,name, password):
         """Docstrings for service methods appear as documentation in the wsdl.
         <b>What fun!</b>
         @param name: student name
@@ -36,12 +41,12 @@ class StudentInfoService(ServiceBase):
         res = verify_info_dict.get(name, '')
 
         if res == password:
-            yield student_info_dict.get(name, 'no student info in database')
+            return student_info_dict.get(name, 'no student info in database')
         else:
-            yield "name or password wrong"
+            return "name or password wrong"
 
-    @rpc(Unicode, Unicode, _returns=Iterable(Unicode))
-    def verify_student_info(self, name, password):
+    @rpc(String, String, _returns=UnsignedInteger)
+    def verify_student_info(self,name, password):
         """Docstrings for service methods appear as documentation in the wsdl.
         <b>What fun!</b>
         @param name: student name
@@ -54,9 +59,9 @@ class StudentInfoService(ServiceBase):
         res = verify_info_dict.get(name, '')
 
         if res == password:
-            yield bool(1)
+            return 1
         else:
-            yield bool(0)
+            return 0
 
 
 # step2: Glue the service definition, input and output protocols
@@ -65,6 +70,7 @@ soap_app = Application([StudentInfoService], 'studentInfo.soap',
                        out_protocol=Soap11())
 
 # step3: Wrap the Spyne application with its wsgi wrapper
+
 wsgi_app = WsgiApplication(soap_app)
 
 if __name__ == '__main__':

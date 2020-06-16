@@ -9,6 +9,7 @@ wsdl_url = "http://localhost:8000/?wsdl"
 
 def say_hello_test(url, name, pwd):
     client = Client(url)  # 创建一个webservice接口对象
+    # print(client.service.get_student_info(name, pwd))
     client.service.verify_student_info(name, pwd)  # 调用这个接口下的getMobileCodeInfo方法，并传入参数
     req = str(client.last_sent())  # 保存请求报文，因为返回的是一个实例，所以要转换成str
     response = str(client.last_received())  # 保存返回报文，返回的也是一个实例
@@ -17,4 +18,4 @@ def say_hello_test(url, name, pwd):
 
 
 if __name__ == '__main__':
-    say_hello_test(wsdl_url, 'stu1', 'pwd1')
+    say_hello_test(wsdl_url, "stud1", "pwd1")
